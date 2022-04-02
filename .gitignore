@@ -1,0 +1,10 @@
+TODOApi.sln
+.vs/TODOApi/config/applicationhost.config
+.vs/TODOApi/DesignTimeBuild/.dtbcache.v2
+.vs/TODOApi/v16/.suo
+frontend/package-lock.json
+
+Web/.vs/**/*
+Web/bin/**/*
+Web/obj/**/*
+
