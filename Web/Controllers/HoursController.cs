@@ -25,7 +25,14 @@ namespace Time.Controllers
         [HttpGet("name/{first_name}/{last_name}")]
         public IActionResult Get(string first_name, string last_name)
         {
-            return Ok(_hoursService.getEmployee(first_name, last_name));
+            var result = _hoursService.getEmployee(first_name, last_name);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
         }
 
         [EnableCors]
