@@ -6,6 +6,6 @@ namespace Time.Interfaces
     {
         public EmployeeHoursDTO getEmployee(string firstName, string lastName);
         EmployeeHoursDTO save(EmployeeHours employeeHours);
-        EmployeeHoursDTO addTime(string firstName, string lastName, int hours, int epoch);
+        EmployeeHoursDTO addTime(EmployeeHoursDTO employeeData);
     }
 }

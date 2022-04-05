@@ -1,10 +1,8 @@
-﻿using Lombok.NET;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Time.Models
 {
-    [AllArgsConstructor]
-    public class Hours
+    public partial class Hours
     {
         [Key]
         public int hours_id { get; set; }
@@ -14,5 +12,17 @@ namespace Time.Models
         public EmployeeHours EmployeeHours { get; set; }
 
 
+        public Hours()
+        {
+        }
+        public Hours(int hours_id, long weekEndingDate, int hours, int employee_hours_id, EmployeeHours employee)
+        {
+            this.hours_id = hours_id;
+            this.weekEndingDate = weekEndingDate;
+            this.hours = hours;
+            this.employee_hours_id = employee_hours_id;
+            this.EmployeeHours = employee;
+
+        }
     }
 }

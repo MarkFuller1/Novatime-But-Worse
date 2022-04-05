@@ -8,3 +8,5 @@ Web/.vs/**/*
 Web/bin/**/*
 Web/obj/**/*
 
+Web;Data.csv
+frontend/yarn.lock

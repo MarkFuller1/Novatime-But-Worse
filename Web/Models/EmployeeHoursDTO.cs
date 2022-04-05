@@ -19,6 +19,15 @@ namespace Time.Models
                 src.hours.ForEach(hour => hours.Add(new HoursDTO(hour.hours, hour.weekEndingDate)));
             }
         }
+
+        public EmployeeHoursDTO() { }
+
+        public EmployeeHoursDTO(string first_name, string last_name)
+        {
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.hours = new List<HoursDTO>();
+        }
     }
 
     public class HoursDTO
@@ -28,9 +37,12 @@ namespace Time.Models
             this.hours = hours;
             this.weekEndingDate = weekEndingDate;
         }
+        public HoursDTO() { }
+
 
         public int hours { get; set; }
         public long weekEndingDate { get; set; }
     }
 
 }
+

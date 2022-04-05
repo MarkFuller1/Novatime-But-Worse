@@ -4,6 +4,8 @@ using System.Linq;
 using Time.Interfaces;
 using Time.Models;
 using Time.Repositories;
+using Time.Utilities;
+
 namespace Time.Services
 {
     public class HoursService : IHoursService
@@ -37,31 +39,36 @@ namespace Time.Services
             return new EmployeeHoursDTO(inserted.Entity);
         }
 
-        public EmployeeHoursDTO addTime(string firstName, string lastName, int hours, int epoch)
+        public EmployeeHoursDTO addTime(EmployeeHoursDTO employeeData)
         {
-            var employeeEntries = from e in _context.Employees.Include(e => e.hours)
-                                  where e.last_name == lastName && e.first_name == firstName
-                                  select e;
+            var employeeEntries = (from e in _context.Employees.Include(e => e.hours)
+                                   where e.last_name == employeeData.lastName && e.first_name == employeeData.firstName
+                                   select e).ToList();
 
-            var employeeEntry = employeeEntries.ToList().First();
-
-            var newHours = new Hours();
-            newHours.hours = hours;
-            newHours.weekEndingDate = epoch;
-            newHours.employee_hours_id = employeeEntry.employee_hours_id;
-            newHours.EmployeeHours = employeeEntry;
-
-            if (employeeEntry.hours == null)
+            if (employeeEntries.Count() == 0)
             {
-                employeeEntry.hours = new List<Hours>();
+                return save(Converter.EmployeeHours(employeeData));
             }
 
-            employeeEntry.hours.Add(newHours);
+            var employeeEntry = employeeEntries.First();
 
-            _context.Update(employeeEntry);
+            employeeEntry.hours = mergeHours(employeeData.hours, employeeEntry.hours, employeeEntry);
+
             _context.SaveChanges();
 
             return new EmployeeHoursDTO(employeeEntry);
+
+        }
+
+        private List<Hours> mergeHours(List<HoursDTO> newHours, List<Hours> oldHours, EmployeeHours link)
+        {
+            Dictionary<long, Hours> hours = new Dictionary<long, Hours>();
+
+            oldHours.ForEach(oHours => hours[oHours.weekEndingDate] = oHours);
+
+            newHours.ForEach(nHours => hours[nHours.weekEndingDate] = Converter.Hours(nHours, link));
+
+            return hours.Values.ToList();
         }
     }
 }

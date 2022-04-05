@@ -9,10 +9,10 @@ using Time.Repositories;
 
 #nullable disable
 
-namespace TODOApi.Migrations
+namespace Time.Migrations
 {
     [DbContext(typeof(EmployeeTimesContext))]
-    [Migration("20220401210404_AddLookupTables")]
+    [Migration("20220404204855_AddLookupTables")]
     partial class AddLookupTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

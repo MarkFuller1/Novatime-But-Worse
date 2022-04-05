@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace TODOApi.Migrations
+namespace Time.Migrations
 {
     public partial class AddLookupTables : Migration
     {

@@ -16,18 +16,32 @@ namespace Time
 {
     public class Startup
     {
+        private const string AllowedOrigins = "AllowAll";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
+        public string AllowAllCorsPolicy { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(AllowedOrigins,
+                    builder => builder
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin()
+                        .AllowCredentials());
+            });
+
             services.AddTransient<IHoursService, HoursService>();
+            services.AddTransient<IExcelService, ExcelService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -39,25 +53,36 @@ namespace Time
             options
                 .UseNpgsql(Configuration.GetConnectionString("EmployeeTimeContext"))
                 .UseSnakeCaseNamingConvention()
-                .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
+                .UseLoggerFactory(LoggerFactory.Create(builder => { builder.AddConsole(); builder.AddDebug(); }))
                 .EnableSensitiveDataLogging()
             );
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddCors();
-            /*                (c =>
-                        {
-                            c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
-                            c.AddPolicy("Access-Control-Allow-Methods", options => options.AllowAnyMethod());
-                            c.AddPolicy("Access-Control-Request-Headers", options => options.AllowAnyHeader());
-                        });
-            */
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllCorsPolicy", builder =>
+                {
+                    builder
+                    .SetIsOriginAllowed(x => _ = true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+                });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -73,19 +98,17 @@ namespace Time
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors(AllowedOrigins);
 
-            enableCors(app);
 
             app.UseAuthorization();
+            enableCors(app);
 
             app.UseEndpoints(endpoints =>
             {
-                enableCors(app);
                 endpoints.MapControllers();
-                enableCors(app);
             });
 
-            enableCors(app);
         }
 
         private IApplicationBuilder enableCors(IApplicationBuilder app)

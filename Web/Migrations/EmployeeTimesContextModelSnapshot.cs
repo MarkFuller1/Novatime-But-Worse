@@ -8,7 +8,7 @@ using Time.Repositories;
 
 #nullable disable
 
-namespace TODOApi.Migrations
+namespace Time.Migrations
 {
     [DbContext(typeof(EmployeeTimesContext))]
     partial class EmployeeTimesContextModelSnapshot : ModelSnapshot

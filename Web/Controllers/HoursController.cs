@@ -6,7 +6,6 @@ using Time.Models;
 
 namespace Time.Controllers
 {
-    [EnableCors]
     [ApiController]
     [Route("api/[controller]")]
     public class HoursController : ControllerBase
@@ -21,7 +20,7 @@ namespace Time.Controllers
             _hoursService = hours;
         }
 
-        [EnableCors]
+        [EnableCors("AllowAll")]
         [HttpGet("name/{first_name}/{last_name}")]
         public IActionResult Get(string first_name, string last_name)
         {
@@ -29,25 +28,17 @@ namespace Time.Controllers
 
             if (result == null)
             {
-                return NotFound();
+                return Ok(new EmployeeHoursDTO(first_name, last_name));
             }
 
             return Ok(result);
         }
 
-        [EnableCors]
-        [HttpPost("name")]
-        public IActionResult Post([FromBody] EmployeeHours employeeHours)
+        [EnableCors("AllowAll")]
+        [HttpPut("name/{first_name}/{last_name}")]
+        public IActionResult Put([FromBody] EmployeeHoursDTO employeeData)
         {
-            var response = _hoursService.save(employeeHours);
-            return Ok(response);
-        }
-
-        [EnableCors]
-        [HttpPut("name/{first_name}/{last_name}/{hours}/{epoch}")]
-        public IActionResult Put(string first_name, string last_name, int hours, int epoch)
-        {
-            return Ok(_hoursService.addTime(first_name, last_name, hours, epoch));
+            return Ok(_hoursService.addTime(employeeData));
         }
     }
 }
